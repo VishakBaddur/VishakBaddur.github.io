@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vishak Baddur Sadanand</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --border-bright: #2a2a2a;
+  --text: #f0ede8;
+  --text-2: #888880;
+  --text-3: #444440;
+  --amber: #d4a853;
+  --amber-dim: #6b5429;
+  --mono: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* TERMINAL BAR */
+#terminal-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  background: #050505;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  z-index: 200;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.term-dots { display: flex; gap: 6px; }
+.term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.term-dot.r { background: #ff5f57; }
+.term-dot.y { background: #febc2e; }
+.term-dot.g { background: #28c840; }
+
+.term-prompt {
+  color: var(--amber);
+  flex-shrink: 0;
+}
+
+#term-status {
+  color: var(--text-2);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.term-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  background: var(--amber);
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* LAYOUT */
+#layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+  padding-top: 32px;
+}
+
+/* CONTROL PANEL */
+#panel {
+  position: fixed;
+  top: 32px;
+  left: 0;
+  width: 260px;
+  height: calc(100vh - 32px);
+  border-right: 1px solid var(--border);
+  padding: 36px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+}
+
+.panel-name {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: normal;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.panel-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 24px;
+}
+
+.panel-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #28c840;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(40,200,64,0.4)}
+  50%{opacity:0.8;box-shadow:0 0 0 4px rgba(40,200,64,0)}
+}
+
+.status-text {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #28c840;
+  letter-spacing: 0.06em;
+}
+
+.panel-section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+  margin-top: 24px;
+}
+
+.panel-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.panel-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 3px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.panel-links a:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.panel-links a.active {
+  background: var(--surface);
+  color: var(--amber);
+}
+
+.panel-link-arrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.panel-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+.activity-log {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-item {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.5;
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+}
+
+.activity-item .activity-tag {
+  color: var(--amber);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.panel-stats {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+}
+
+.stat-num {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--amber);
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: right;
+  max-width: 110px;
+  line-height: 1.3;
+}
+
+/* MAIN CONTENT */
+#main {
+  margin-left: 260px;
+  padding: 60px 64px 100px 64px;
+  max-width: 860px;
+}
+
+/* FADE IN */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* SECTION HEADERS */
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.section-heading {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: normal;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 32px;
+}
+
+section { margin-bottom: 96px; }
+
+/* MANIFESTO HERO */
+#manifesto {
+  padding-top: 20px;
+  margin-bottom: 80px;
+}
+
+.manifesto-statement {
+  font-family: var(--mono);
+  font-size: clamp(24px, 3.5vw, 40px);
+  font-weight: normal;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  margin-bottom: 32px;
+}
+
+.manifesto-statement .highlight {
+  color: var(--amber);
+}
+
+.manifesto-sub {
+  font-size: 15px;
+  color: var(--text-2);
+  max-width: 560px;
+  line-height: 1.75;
+  margin-bottom: 40px;
+}
+
+.manifesto-divider {
+  width: 48px;
+  height: 1px;
+  background: var(--amber-dim);
+  margin-bottom: 40px;
+}
+
+/* OS SECTION */
+.os-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.os-cell {
+  background: var(--bg);
+  padding: 20px;
+}
+
+.os-cell-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.os-cell-value {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.os-para {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+  max-width: 600px;
+}
+
+/* WORK ENTRIES */
+.work-entry {
+  margin-bottom: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+}
+
+.work-entry:last-child { border-bottom: none; }
+
+.work-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+  gap: 16px;
+}
+
+.work-title {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: normal;
+}
+
+.work-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.work-org {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.work-org a {
+  color: var(--amber);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.work-org a:hover { border-color: var(--amber); }
+
+.psr {
+  border-left: 2px solid var(--border-bright);
+  padding-left: 16px;
+  margin-bottom: 20px;
+}
+
+.psr-block {
+  margin-bottom: 12px;
+}
+
+.psr-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.psr-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.psr-text strong { color: var(--text); font-weight: 500; }
+
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  border: 1px solid var(--border-bright);
+  padding: 3px 8px;
+  letter-spacing: 0.04em;
+}
+
+/* OSS */
+.pr-list { list-style: none; }
+
+.pr-item {
+  border-top: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.pr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pr-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.pr-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #28c840;
+  border: 1px solid #1a4a22;
+  padding: 2px 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pr-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 580px;
+  margin-bottom: 10px;
+}
+
+.pr-link {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--amber);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.pr-link:hover { border-color: var(--amber); }
+
+/* PROJECTS */
+.project-entry {
+  margin-bottom: 52px;
+  padding-bottom: 52px;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-entry:last-child { border-bottom: none; }
+
+.project-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.project-title {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text);
+  font-weight: normal;
+}
+
+.project-subtitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  margin-bottom: 20px;
+}
+
+.project-links {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.project-link {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--amber);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.project-link:hover { border-color: var(--amber); }
+
+/* SKILLS */
+.skill-table { width: 100%; border-collapse: collapse; }
+
+.skill-table tr { border-top: 1px solid var(--border); }
+
+.skill-table td {
+  padding: 12px 0;
+  vertical-align: top;
+}
+
+.skill-key {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  width: 120px;
+  padding-right: 20px;
+  white-space: nowrap;
+}
+
+.skill-val {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* CONTACT */
+.contact-statement {
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--text);
+  font-weight: normal;
+  line-height: 1.35;
+  max-width: 480px;
+  margin-bottom: 24px;
+}
+
+.contact-sub {
+  font-size: 14px;
+  color: var(--text-2);
+  max-width: 440px;
+  line-height: 1.75;
+  margin-bottom: 36px;
+}
+
+.contact-table { border-collapse: collapse; }
+
+.contact-table tr { border-top: 1px solid var(--border); }
+
+.contact-table td { padding: 12px 0; }
+
+.contact-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-right: 24px;
+  white-space: nowrap;
+}
+
+.contact-val a {
+  font-size: 13px;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+.contact-val a:hover { color: var(--amber); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+}
+
+footer a {
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+footer a:hover { color: var(--amber); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  #layout { grid-template-columns: 1fr; }
+  #panel { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  #main { margin-left: 0; padding: 40px 24px 80px; }
+  .os-grid { grid-template-columns: 1fr; }
+  .manifesto-statement { font-size: 22px; }
+  .panel-stats { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity:1; transform:none; transition:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TERMINAL BAR -->
+<div id="terminal-bar">
+  <div class="term-dots">
+    <div class="term-dot r"></div>
+    <div class="term-dot y"></div>
+    <div class="term-dot g"></div>
+  </div>
+  <span class="term-prompt">vishak@portfolio ~ %</span>
+  <span id="term-status"></span><span class="term-cursor"></span>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- CONTROL PANEL -->
+  <aside id="panel">
+    <div class="panel-name">Vishak<br>Baddur.</div>
+    <div class="panel-title">Software Engineer</div>
+
+    <div class="panel-status">
+      <div class="status-dot"></div>
+      <span class="status-text">AVAILABLE NOW</span>
+    </div>
+
+    <div class="panel-section-label">Navigate</div>
+    <ul class="panel-links">
+      <li><a href="#manifesto" class="active"><span class="panel-link-arrow">&gt;</span> Manifesto</a></li>
+      <li><a href="#os"><span class="panel-link-arrow">&gt;</span> Operating System</a></li>
+      <li><a href="#work"><span class="panel-link-arrow">&gt;</span> The Work</a></li>
+      <li><a href="#opensource"><span class="panel-link-arrow">&gt;</span> Open Source</a></li>
+      <li><a href="#projects"><span class="panel-link-arrow">&gt;</span> Projects</a></li>
+      <li><a href="#skills"><span class="panel-link-arrow">&gt;</span> Stack</a></li>
+      <li><a href="#contact"><span class="panel-link-arrow">&gt;</span> Contact</a></li>
+    </ul>
+
+    <hr class="panel-divider">
+
+    <div class="panel-section-label">Latest Activity</div>
+    <ul class="activity-log">
+      <li class="activity-item">
+        <span class="activity-tag">MERGED</span>
+        PR #10086: 62x autoreload speedup via functools.cache
+      </li>
+      <li class="activity-item">
+        <span class="activity-tag">MERGED</span>
+        PR #9889: RuffFormatter scope fix
+      </li>
+      <li class="activity-item">
+        <span class="activity-tag">GSoC</span>
+        5-agent LangGraph pipeline shipped
+      </li>
+      <li class="activity-item">
+        <span class="activity-tag">TRAINING</span>
+        Calisthenics: front lever progression
+      </li>
+    </ul>
+
+    <div class="panel-stats">
+      <div class="stat-row">
+        <span class="stat-num">8</span>
+        <span class="stat-label">merged PRs, marimo (22k stars)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-num">4.0</span>
+        <span class="stat-label">GPA, MS CS, UIC</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-num">28.7k</span>
+        <span class="stat-label">ops/sec, DistributedDB</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main">
+
+    <!-- MANIFESTO -->
+    <section id="manifesto">
+      <p class="section-eyebrow reveal">// manifesto</p>
+      <h1 class="manifesto-statement reveal">
+        I find the bugs<br>
+        <span class="highlight">nobody else</span><br>
+        wants to touch.
+      </h1>
+      <div class="manifesto-divider reveal"></div>
+      <p class="manifesto-sub reveal">
+        Eight merged PRs into a 22k-star codebase. A 3-layer bug fixed across Python,
+        TypeScript, and a reactive cell graph. A production multi-agent AI pipeline
+        shipped for GSoC. Not demos. Not prototypes. Actual working software.
+      </p>
+      <p class="manifesto-sub reveal" style="transition-delay:0.05s">
+        MS CS from UIC (4.0 GPA). F-1 OPT, available now. Based in Chicago.
+        The kind of engineer who reads the diff before pushing back on the maintainer.
+        And wins.
+      </p>
+    </section>
+
+    <!-- OS -->
+    <section id="os">
+      <p class="section-eyebrow reveal">// operating_system.md</p>
+      <h2 class="section-heading reveal">Operating System</h2>
+
+      <div class="os-grid reveal">
+        <div class="os-cell">
+          <div class="os-cell-label">Physical Build</div>
+          <div class="os-cell-value">Basketball, football, table tennis, badminton. Calisthenics: pull-ups, dips, working toward front lever. Sports are the first love.</div>
+        </div>
+        <div class="os-cell">
+          <div class="os-cell-label">Mental Model</div>
+          <div class="os-cell-value">Curious about everything. Bored by nothing. Want to travel the world, learn martial arts from the people who originated them, build something of my own one day.</div>
+        </div>
+        <div class="os-cell">
+          <div class="os-cell-label">Debugging Philosophy</div>
+          <div class="os-cell-value">In basketball you watch film before you fix your shot. In code I read the full call stack before I write a line. The root cause is always three layers deeper than the error message.</div>
+        </div>
+        <div class="os-cell">
+          <div class="os-cell-label">Training Discipline</div>
+          <div class="os-cell-value">Calisthenics taught me that strength is built in increments, not in bursts. A front lever requires every muscle to work. A distributed system requires every node to agree. Same principle.</div>
+        </div>
+      </div>
+
+      <p class="os-para reveal">
+        The consistency required to progress in calisthenics is the same consistency that got 8 PRs merged.
+        Show up, do the work, iterate. No shortcut makes a front lever easier.
+        No shortcut makes a 3-layer bug easier. You trace it, you fix it, you document it.
+      </p>
+    </section>
+
+    <!-- WORK -->
+    <section id="work">
+      <p class="section-eyebrow reveal">// the_work</p>
+      <h2 class="section-heading reveal">The Work</h2>
+
+      <div class="work-entry reveal">
+        <div class="work-header">
+          <span class="work-title">Google Summer of Code 2026</span>
+          <span class="work-date">MAY 2026 - PRESENT</span>
+        </div>
+        <div class="work-org">
+          C2SI Organization &nbsp;/ Remote
+          <a href="https://github.com/c2siorg/b0bot/pulls?q=is%3Apr+is%3Amerged+author%3AVishakBaddur" target="_blank">view merged PRs</a>
+        </div>
+        <div class="psr">
+          <div class="psr-block">
+            <div class="psr-label">Problem</div>
+            <div class="psr-text">Needed a production cybersecurity news system with multiple AI agents that could coordinate without losing state between requests or hallucinating on malformed output.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Build</div>
+            <div class="psr-text">Designed a <strong>5-agent LangGraph pipeline</strong> (PlannerAgent, ScraperAgent, ResponderAgent, AnalyzerAgent, NotificationAgent) with a typed PlannerState schema enforcing input/output contracts across every handoff. Redis-backed session state with TTL caching eliminated redundant LLM calls.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Resolution</div>
+            <div class="psr-text">Replaced a fragile toJSON() string-splitting parser with JSON-mode structured LLM output. <strong>Silent data loss eliminated.</strong> The system now either works correctly or tells you exactly why it didn't.</div>
+          </div>
+        </div>
+        <div class="work-tags">
+          <span class="tag">LangGraph</span>
+          <span class="tag">Python</span>
+          <span class="tag">Redis</span>
+          <span class="tag">Multi-agent</span>
+          <span class="tag">BullMQ</span>
+        </div>
+      </div>
+
+      <div class="work-entry reveal">
+        <div class="work-header">
+          <span class="work-title">ML Engineer Intern</span>
+          <span class="work-date">MAR 2024 - JUL 2024</span>
+        </div>
+        <div class="work-org">National Remote Sensing Center, ISRO &nbsp;/ Hyderabad, India</div>
+        <div class="psr">
+          <div class="psr-block">
+            <div class="psr-label">Problem</div>
+            <div class="psr-text">Predict soil micronutrients (Fe, Zn, Cu, Mn) from PRISMA hyperspectral satellite data across 177 spectral bands. Ground truth: 104 soil samples from Nalgonda district. The data came from space. The samples came from the ground. The gap was the problem.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Build</div>
+            <div class="psr-text">End-to-end pipeline with <strong>Random Forest and Gradient Boosting</strong>, Savitzky-Golay filtering, PCA for dimensionality reduction, cross-validation, and hyperparameter tuning using Scikit-learn, NumPy, and Pandas.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Resolution</div>
+            <div class="psr-text"><strong>R2 of 0.79 for Zinc prediction.</strong> Spatial estimation maps validated against all 104 ground-truth samples. Presented directly to ISRO stakeholders.</div>
+          </div>
+        </div>
+        <div class="work-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Scikit-learn</span>
+          <span class="tag">NumPy</span>
+          <span class="tag">Pandas</span>
+          <span class="tag">Hyperspectral</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPEN SOURCE -->
+    <section id="opensource">
+      <p class="section-eyebrow reveal">// open_source</p>
+      <h2 class="section-heading reveal">The bugs I couldn't leave alone.</h2>
+      <p class="os-para reveal" style="max-width:580px;margin-bottom:8px;">
+        marimo is a reactive Python notebook used by thousands of AI/ML researchers.
+        I found bugs. I fixed them. Eight times.
+        <a class="pr-link" href="https://github.com/marimo-team/marimo/pulls?q=is:pr+author:VishakBaddur+is:merged" target="_blank" style="margin-left:8px;">view all 8 PRs</a>
+      </p>
+
+      <ul class="pr-list reveal">
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed disabled cells permanently displaying ancestor errors after recovery</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">3-layer root cause: wrong backend code path, stale snapshot timing, transitionCell() not clearing the errored flag. Fix moves recovery into _run_cells() with a pre-run snapshot, broadcasts broadcast_empty_output, patches the frontend state machine. 24 commits. 4 maintainers.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/8784" target="_blank">PR #8784</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed RuffFormatter applying wrong blank-line rules to cell code</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">ruff treats stdin as file scope (E302) but on disk cells are wrapped in def _(): (E301). Wrapped cells before formatting, unwrapped via AST parsing, used skip_wrap set for comment-only cells. Pushed back on maintainer's suggested fix with an empirical counterexample and won.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/9889" target="_blank">PR #9889</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Built syntax highlighting for Python code blocks in LSP hover docs</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">Traced the full render path from LSP response through formatContents() to DOM. Injected a custom markdownRenderer using @lezer/python and @lezer/highlight with light-dark() theming. Zero new dependencies. 5019 tests pass.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/9824" target="_blank">PR #9824</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed autoreload performance regression: 12ms/cell to 0.17ms (62x)</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">_is_user_module() called os.path.realpath on every module on every check(). Added @functools.cache-decorated _normalized_path() memoizing by __file__ string. 62x speedup on a 20-cell notebook.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/10086" target="_blank">PR #10086</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed mo.status.spinner silently lost inside vstack/hstack</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">Eager HTML serialization in _FlexContainerHtml baked frozen strings at construction time. Redesigned to hold live child references and rebuild on every flush.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/8626" target="_blank">PR #8626</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed --sandbox mode failure for relative path sources</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">uv export --script returns script-relative paths that broke when resolved against CWD. Converted to absolute using the script's parent directory as base in _uv_export_script_requirements_txt().</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/9052" target="_blank">PR #9052</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Resolved pyright type error in mo.ui.table(chart.value)</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">data parameter only declared IntoDataFrame, missing the other ChartDataType members. Expanded TableData alias. Ruled out lazy auto-detection after it broke 8 parametrized tests across Polars and Ibis fixtures.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/9674" target="_blank">PR #9674</a>
+        </li>
+        <li class="pr-item">
+          <div class="pr-row">
+            <span class="pr-title">Fixed hover tooltip duplication for all LSP providers, not just pylsp</span>
+            <span class="pr-badge">MERGED</span>
+          </div>
+          <p class="pr-desc">hintTooltip() only suppressed marimo's built-in hover when pylsp was active. ty, pyrefly, and basedpyright still fired duplicate tooltips. Extended the guard to cover all 4 providers.</p>
+          <a class="pr-link" href="https://github.com/marimo-team/marimo/pull/9741" target="_blank">PR #9741</a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <p class="section-eyebrow reveal">// projects</p>
+      <h2 class="section-heading reveal">Things I built.</h2>
+
+      <div class="project-entry reveal">
+        <div class="project-meta">
+          <span class="project-title">ProcureAI</span>
+        </div>
+        <p class="project-subtitle">AI Procurement Intelligence Platform</p>
+        <div class="psr">
+          <div class="psr-block">
+            <div class="psr-label">Problem</div>
+            <div class="psr-text">Procurement managers were spending hours manually parsing vendor quotes from PDFs, emails, and scanned images. No structure. No comparison. Just spreadsheets and pain.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Build</div>
+            <div class="psr-text"><strong>7-agent LLM architecture</strong> handling PDFs, scanned images, Word docs, and emails. JWT auth, bcrypt, per-user isolation. Docker image from 1.5GB to 300MB by swapping sentence-transformers for Groq's embedding API. Semantic search via pgvector with HNSW indexing.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Resolution</div>
+            <div class="psr-text">Multi-hour manual process automated. <strong>Live demo running.</strong></div>
+          </div>
+        </div>
+        <div class="work-tags">
+          <span class="tag">FastAPI</span><span class="tag">React</span><span class="tag">TypeScript</span>
+          <span class="tag">PostgreSQL</span><span class="tag">pgvector</span><span class="tag">Groq</span>
+        </div>
+        <div class="project-links">
+          <a href="https://procure-ai-byk5.onrender.com" target="_blank" class="project-link">live demo</a>
+          <a href="https://github.com/VishakBaddur/procure-ai" target="_blank" class="project-link">github</a>
+        </div>
+      </div>
+
+      <div class="project-entry reveal">
+        <div class="project-meta">
+          <span class="project-title">DistributedDB</span>
+        </div>
+        <p class="project-subtitle">Key-Value Store with Raft Consensus</p>
+        <div class="psr">
+          <div class="psr-block">
+            <div class="psr-label">Problem</div>
+            <div class="psr-text">Wanted to understand distributed consensus at the level where I could defend every design decision. Reading papers wasn't enough. I needed to build it.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Build</div>
+            <div class="psr-text">Raft from scratch in C++17. Leader election, log replication, majority commit. Async event-driven TCP server via <strong>Boost.Asio.</strong> Custom Write-Ahead Logging for crash safety. Three nodes, one docker-compose up.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Resolution</div>
+            <div class="psr-text"><strong>Sub-300ms re-election</strong> after leader failure with zero data loss. <strong>28,700+ ops/sec</strong> across 50 concurrent clients. 100% success rate over 50,000 benchmark operations.</div>
+          </div>
+        </div>
+        <div class="work-tags">
+          <span class="tag">C++17</span><span class="tag">Boost.Asio</span><span class="tag">Docker</span>
+          <span class="tag">Raft</span><span class="tag">WAL</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/VishakBaddur/Custom_Database" target="_blank" class="project-link">github</a>
+        </div>
+      </div>
+
+      <div class="project-entry reveal">
+        <div class="project-meta">
+          <span class="project-title">Launcher</span>
+        </div>
+        <p class="project-subtitle">AI-Powered Startup Co-Founder</p>
+        <div class="psr">
+          <div class="psr-block">
+            <div class="psr-label">Problem</div>
+            <div class="psr-text">Early-stage founders spend weeks on market analysis, SWOT, competitor research, and pitch decks before even knowing if the idea holds up. The bottleneck is iteration speed, not ambition.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Build</div>
+            <div class="psr-text">4-step LLM reasoning pipeline (Llama 3.3 70B via Groq): market categorization, SWOT, competitor positioning, pitch narrative. Each stage conditions on the previous. <strong>ChromaDB RAG</strong> retrieves past analyses via cosine similarity. Full-stack SaaS with JWT auth, PostgreSQL, 3-tier fallback, CI/CD via GitHub Actions.</div>
+          </div>
+          <div class="psr-block">
+            <div class="psr-label">Resolution</div>
+            <div class="psr-text">Weeks of analysis compressed to minutes. Output improves with every query.</div>
+          </div>
+        </div>
+        <div class="work-tags">
+          <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">React</span>
+          <span class="tag">Llama-3.3-70B</span><span class="tag">ChromaDB</span><span class="tag">RAG</span>
+        </div>
+        <div class="project-links">
+          <a href="https://launcher-frontend.onrender.com" target="_blank" class="project-link">live demo</a>
+          <a href="https://github.com/VishakBaddur/Launcher" target="_blank" class="project-link">github</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <p class="section-eyebrow reveal">// stack</p>
+      <h2 class="section-heading reveal">What I work with.</h2>
+      <table class="skill-table reveal">
+        <tr>
+          <td class="skill-key">Languages</td>
+          <td class="skill-val">Python, TypeScript, JavaScript, SQL, C++, Java</td>
+        </tr>
+        <tr>
+          <td class="skill-key">AI / ML</td>
+          <td class="skill-val">LangGraph, Multi-Agent Systems, RAG, pgvector, LLM APIs (Groq, HuggingFace, Ollama), Prompt Engineering</td>
+        </tr>
+        <tr>
+          <td class="skill-key">Backend</td>
+          <td class="skill-val">FastAPI, Flask, Node.js, Redis, Microservices, BullMQ</td>
+        </tr>
+        <tr>
+          <td class="skill-key">Database</td>
+          <td class="skill-val">PostgreSQL, pgvector, Redis, ChromaDB, Supabase</td>
+        </tr>
+        <tr>
+          <td class="skill-key">DevOps</td>
+          <td class="skill-val">AWS (EC2, S3), Docker, Docker Compose, GitHub Actions CI/CD, Git, Linux</td>
+        </tr>
+        <tr>
+          <td class="skill-key">Systems</td>
+          <td class="skill-val">Distributed Systems, Raft Consensus, Async I/O, Event-Driven Architecture, WAL, Crash Recovery</td>
+        </tr>
+        <tr>
+          <td class="skill-key">Frontend</td>
+          <td class="skill-val">React.js, TypeScript, Next.js, Tailwind CSS</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <p class="section-eyebrow reveal">// contact</p>
+      <h2 class="contact-statement reveal">If something caught your attention, I'd like to hear about it.</h2>
+      <p class="contact-sub reveal">Not looking for just any role. Looking for a team building something hard where the work actually matters. If that's you, reach out.</p>
+      <table class="contact-table reveal">
+        <tr>
+          <td class="contact-key">Email</td>
+          <td class="contact-val"><a href="mailto:vishakbaddurs@gmail.com">vishakbaddurs@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td class="contact-key">LinkedIn</td>
+          <td class="contact-val"><a href="https://linkedin.com/in/vishakbaddur" target="_blank">linkedin.com/in/vishakbaddur</a></td>
+        </tr>
+        <tr>
+          <td class="contact-key">GitHub</td>
+          <td class="contact-val"><a href="https://github.com/VishakBaddur" target="_blank">github.com/VishakBaddur</a></td>
+        </tr>
+        <tr>
+          <td class="contact-key">Location</td>
+          <td class="contact-val"><a href="#">Chicago, IL</a></td>
+        </tr>
+      </table>
+    </section>
+
+    <footer class="reveal">
+      <span>Vishak Baddur Sadanand</span>
+      <a href="https://github.com/VishakBaddur" target="_blank">github.com/VishakBaddur</a>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+// Terminal rotating status
+const statuses = [
+  "compiling latest project...",
+  "training: front lever progression",
+  "8 PRs merged to marimo",
+  "analyzing new architecture...",
+  "redis session state: active",
+  "watching NBA highlights...",
+  "raft consensus: leader elected",
+  "reading the diff before pushing back",
+  "available for the right opportunity",
+  "gsoc 2026: pipeline shipped",
+];
+
+let si = 0;
+const statusEl = document.getElementById('term-status');
+
+function typeStatus(text, cb) {
+  statusEl.textContent = '';
+  let i = 0;
+  const iv = setInterval(() => {
+    statusEl.textContent += text[i];
+    i++;
+    if (i >= text.length) { clearInterval(iv); setTimeout(cb, 2200); }
+  }, 38);
+}
+
+function eraseStatus(cb) {
+  let text = statusEl.textContent;
+  const iv = setInterval(() => {
+    text = text.slice(0, -1);
+    statusEl.textContent = text;
+    if (!text) { clearInterval(iv); cb(); }
+  }, 18);
+}
+
+function cycleStatus() {
+  typeStatus(statuses[si % statuses.length], () => {
+    eraseStatus(() => {
+      si++;
+      cycleStatus();
+    });
+  });
+}
+
+cycleStatus();
+
+// Reveal on scroll
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.panel-links a');
+
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href') === '#' + id) a.classList.add('active');
+      });
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(s => navObserver.observe(s));
+
+// Trigger initial reveals
+window.addEventListener('load', () => {
+  document.querySelectorAll('#manifesto .reveal').forEach(el => el.classList.add('visible'));
+});
+</script>
+
+</body>
+</html>
