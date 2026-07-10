@@ -256,7 +256,8 @@ body {
 #main {
   margin-left: 260px;
   padding: 60px 64px 100px 64px;
-  max-width: 860px;
+  max-width: none;
+  width: calc(100vw - 260px);
 }
 
 /* FADE IN */
@@ -297,12 +298,15 @@ section { margin-bottom: 96px; }
 
 .manifesto-statement {
   font-family: var(--mono);
-  font-size: clamp(24px, 3.5vw, 40px);
+  font-size: clamp(20px, 2.5vw, 32px);
   font-weight: normal;
   color: var(--text);
   letter-spacing: -0.03em;
   line-height: 1.25;
   margin-bottom: 32px;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
 }
 
 .manifesto-statement .highlight {
@@ -315,6 +319,8 @@ section { margin-bottom: 96px; }
   max-width: 560px;
   line-height: 1.75;
   margin-bottom: 40px;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .manifesto-divider {
@@ -752,21 +758,11 @@ footer a:hover { color: var(--amber); }
     <section id="manifesto">
       <p class="section-eyebrow reveal">// manifesto</p>
       <h1 class="manifesto-statement reveal">
-        I find the bugs<br>
-        <span class="highlight">nobody else</span><br>
-        wants to touch.
+        I find the bugs <span class="highlight">nobody else</span> wants to touch.
       </h1>
       <div class="manifesto-divider reveal"></div>
-      <p class="manifesto-sub reveal">
-        Eight merged PRs into a 22k-star codebase. A 3-layer bug fixed across Python,
-        TypeScript, and a reactive cell graph. A production multi-agent AI pipeline
-        shipped for GSoC. Not demos. Not prototypes. Actual working software.
-      </p>
-      <p class="manifesto-sub reveal" style="transition-delay:0.05s">
-        MS CS from UIC (4.0 GPA). F-1 OPT, available now. Based in Chicago.
-        The kind of engineer who reads the diff before pushing back on the maintainer.
-        And wins.
-      </p>
+      <p class="manifesto-sub reveal">Eight merged PRs into a 22k-star codebase. A 3-layer bug fixed across Python, TypeScript, and a reactive cell graph. A production multi-agent AI pipeline shipped for GSoC. Not demos. Not prototypes. Actual working software.</p>
+      <p class="manifesto-sub reveal" style="transition-delay:0.05s">MS CS from UIC (4.0 GPA). F-1 OPT, available now. Based in Chicago. The kind of engineer who reads the diff before pushing back on the maintainer. And wins.</p>
     </section>
 
     <!-- OS -->
