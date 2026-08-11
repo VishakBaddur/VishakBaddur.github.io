@@ -448,15 +448,15 @@ footer a:hover { color: var(--amber); }
       <p class="section-eyebrow reveal">// the_work</p>
       <h2 class="section-heading reveal">The Work</h2>
       <div class="work-entry reveal">
-        <div class="work-header"><span class="work-title">Google Summer of Code 2026</span><span class="work-date">MAY 2026 - PRESENT</span></div>
-        <div class="work-org">C2SI Organization &nbsp;/ Remote<a href="https://github.com/c2siorg/b0bot/pulls?q=is%3Apr+is%3Amerged+author%3AVishakBaddur" target="_blank">view merged PRs</a></div>
-        <div class="psr">
-          <div class="psr-block"><div class="psr-label">Problem</div><div class="psr-text">Needed a production cybersecurity news system with multiple AI agents that could coordinate without losing state between requests or hallucinating on malformed output.</div></div>
-          <div class="psr-block"><div class="psr-label">Build</div><div class="psr-text">Designed a <strong>5-agent LangGraph pipeline</strong> (PlannerAgent, ScraperAgent, ResponderAgent, AnalyzerAgent, NotificationAgent) with a typed PlannerState schema enforcing input/output contracts across every handoff. Redis-backed session state with TTL caching eliminated redundant LLM calls.</div></div>
-          <div class="psr-block"><div class="psr-label">Resolution</div><div class="psr-text">Replaced a fragile toJSON() string-splitting parser with JSON-mode structured LLM output. <strong>Silent data loss eliminated.</strong> The system now either works correctly or tells you exactly why it didn't.</div></div>
-        </div>
-        <div class="work-tags"><span class="tag">LangGraph</span><span class="tag">Python</span><span class="tag">Redis</span><span class="tag">Multi-agent</span><span class="tag">BullMQ</span></div>
-      </div>
+  <div class="work-header"><span class="work-title">Google Summer of Code 2026</span><span class="work-date">MAY 2026 - AUGUST 2026</span></div>
+  <div class="work-org">C2SI Organization &nbsp;/ Remote<a href="https://github.com/c2siorg/b0bot/pulls?q=is%3Apr+is%3Amerged+author%3AVishakBaddur" target="_blank">view merged PRs</a></div>
+  <div class="psr">
+    <div class="psr-block"><div class="psr-label">Problem</div><div class="psr-text">A production cybersecurity news system needed multiple AI agents coordinating without losing state, and the project's own proposal claimed a conversational AI that, once I actually looked, was fully rule-based with zero real LLM calls behind it.</div></div>
+    <div class="psr-block"><div class="psr-label">Build</div><div class="psr-text">Designed a <strong>5-agent LangGraph pipeline</strong> (Planner, Scraper, Analyzer, Responder, Notifier), each enforcing input/output contracts via a shared state schema, independently unit tested across 28 tests with full mock coverage. Built the actual LLM integration for intent classification and grounded responses that the proposal had only claimed, and activated dormant hybrid keyword/vector search infrastructure sitting unused in the codebase. Evaluated sentiment analysis tradeoffs, keyword rules, VADER, fine-tuning, DistilBERT, against a hard constraint: no labeled cybersecurity sentiment dataset exists anywhere. Shipped per-article DistilBERT SST-2 inference at 11ms/CPU.</div></div>
+    <div class="psr-block"><div class="psr-label">Resolution</div><div class="psr-text">Diagnosed and fixed a silent production bug where subscribe requests appeared successful but never actually wrote to the database, undetected for 3 weeks because the mocked tests couldn't catch it. Rebuilt as a single verified insert path. <strong>Silent failure eliminated, twice over</strong>, once in the parsing layer, once in a bug the test suite itself was blind to.</div></div>
+  </div>
+  <div class="work-tags"><span class="tag">LangGraph</span><span class="tag">Python</span><span class="tag">Redis</span><span class="tag">Multi-agent</span><span class="tag">DistilBERT</span></div>
+</div>
       <div class="work-entry reveal">
         <div class="work-header"><span class="work-title">ML Engineer Intern</span><span class="work-date">MAR 2024 - JUL 2024</span></div>
         <div class="work-org">National Remote Sensing Center, ISRO &nbsp;/ Hyderabad, India</div>
