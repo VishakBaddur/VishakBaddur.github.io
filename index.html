@@ -418,6 +418,7 @@ footer a:hover { color: var(--amber); }
     <ul class="activity-log">
       <li class="activity-item"><span class="activity-tag">MERGED</span>PR #10086: 62x autoreload speedup via functools.cache</li>
       <li class="activity-item"><span class="activity-tag">BUILT</span>Flowforge: 0 lost or duplicated tasks in a 510K-task run</li>
+      <li class="activity-item"><span class="activity-tag">BUILT</span>DistributedDB: 5,000+ majority-committed writes/sec, fsync on every commit</li>
       <li class="activity-item"><span class="activity-tag">GSoC</span>5-agent LangGraph pipeline shipped</li>
       <li class="activity-item"><span class="activity-tag">TRAINING</span>Calisthenics: front lever progression</li>
     </ul>
@@ -464,10 +465,11 @@ footer a:hover { color: var(--amber); }
         <div class="project-meta"><span class="project-title">DistributedDB</span></div>
         <p class="project-subtitle">Key-Value Store with Raft Consensus / C++17</p>
         <div class="story">
-          <p>I wanted to understand distributed consensus well enough to defend every design decision. Reading the paper wasn't enough, so I wrote <strong>Raft from scratch in C++17</strong>: leader election, log replication, majority commit, an async TCP server on Boost.Asio, and a custom write-ahead log for durability. Three nodes, one <em>docker compose up</em>, auto-restart.</p>
+          <p>I wanted to understand distributed consensus well enough to defend every design decision. Reading the paper wasn't enough, so I wrote <strong>Raft from scratch in C++17</strong>: leader election, log replication, majority commit, and a persisted term, vote and log, behind an async TCP server on Boost.Asio with a write-ahead log (group-commit fsync). Three nodes, one <em>docker compose up</em>, persistent volumes, auto-restart.</p>
+          <p>Then I made it earn its numbers. A lock-ordering deadlock appeared only under 50 concurrent clients. I profiled the write path, found the commit bottleneck, and took cluster throughput from <strong>130 to 5,100 writes/sec</strong>.</p>
         </div>
-        <div class="result-line">Re-election in under 300ms. 28,700+ ops/sec across 50 concurrent clients. 100% success over 50,000 benchmark operations.</div>
-        <div class="work-tags"><span class="tag">C++17</span><span class="tag">Boost.Asio</span><span class="tag">Docker</span><span class="tag">Raft</span><span class="tag">WAL</span></div>
+        <div class="result-line">3-node cluster: 5,000+ majority-committed writes/sec across 50 concurrent clients, 100% success over 50,000 operations, fsync on every commit. Leader re-elected in 181 to 293ms across 12 leader-kill runs. Recovers with data intact after all three nodes are killed at once. Single node: 39,000+ put/get pairs/sec, crash recovery verified with kill -9.</div>
+        <div class="work-tags"><span class="tag">C++17</span><span class="tag">Boost.Asio</span><span class="tag">Docker</span><span class="tag">Raft</span><span class="tag">WAL</span><span class="tag">fsync</span></div>
         <div class="project-links"><a href="https://github.com/VishakBaddur/Custom_Database" target="_blank" class="project-link">github</a></div>
       </div>
 
@@ -560,11 +562,12 @@ footer a:hover { color: var(--amber); }
       <h2 class="section-heading reveal">What I work with.</h2>
       <table class="skill-table reveal">
         <tr><td class="skill-key">Languages</td><td class="skill-val">Java, Python, TypeScript, JavaScript, SQL, C++, C</td></tr>
-        <tr><td class="skill-key">AI / ML</td><td class="skill-val">LangGraph, Multi-Agent Systems, RAG, pgvector, LLM APIs (Groq, Voyage AI, HuggingFace, Ollama), Scikit-learn, DistilBERT</td></tr>
+        <tr><td class="skill-key">AI / ML</td><td class="skill-val">Generative AI, LangGraph, Multi-Agent Systems, RAG, pgvector, LLM APIs (Groq, Voyage AI, HuggingFace, Ollama), Scikit-learn, DistilBERT</td></tr>
         <tr><td class="skill-key">Frameworks</td><td class="skill-val">Spring Boot, FastAPI, Flask, React, Node.js</td></tr>
         <tr><td class="skill-key">Data</td><td class="skill-val">Kafka, PostgreSQL, Redis, pgvector, ChromaDB</td></tr>
-        <tr><td class="skill-key">DevOps</td><td class="skill-val">Docker, Docker Compose, Kubernetes, AWS, GitHub Actions CI/CD, Git, Linux</td></tr>
+        <tr><td class="skill-key">DevOps</td><td class="skill-val">Docker, Docker Compose, Kubernetes, AWS, GitHub Actions CI/CD, Git, Unix/Linux</td></tr>
         <tr><td class="skill-key">Systems</td><td class="skill-val">Distributed Systems, Raft Consensus, Event Sourcing, Leases and Idempotency, Async I/O, WAL, Crash Recovery</td></tr>
+        <tr><td class="skill-key">AI Tools</td><td class="skill-val">Claude Code (daily, for building, debugging, and test generation)</td></tr>
       </table>
     </section>
 
@@ -599,7 +602,8 @@ const statuses = [
   "analyzing new architecture...",
   "redis session state: active",
   "watching NBA highlights...",
-  "raft consensus: leader elected",
+  "raft: leader re-elected in 181-293ms (12 kill runs)",
+  "raft: 130 to 5,100 writes/sec after profiling",
   "reading the diff before pushing back",
   "available for the right opportunity",
   "gsoc 2026: pipeline shipped",
