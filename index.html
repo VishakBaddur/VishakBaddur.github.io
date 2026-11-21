@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Vishak Baddur Sadanand: software engineer. marimo contributor, GSoC 2026, distributed systems and agentic AI.">
+<meta name="description" content="Vishak Baddur Sadanand: software engineer. marimo contributor, GSoC 2026, distributed systems, AWS serverless and agentic AI.">
 <title>Vishak Baddur Sadanand</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -420,6 +420,7 @@ footer a:hover { color: var(--amber); }
     <div class="panel-section-label">Latest Activity</div>
     <ul class="activity-log">
       <li class="activity-item"><span class="activity-tag">MERGED</span>PR #10086: 62x autoreload speedup via functools.cache</li>
+      <li class="activity-item"><span class="activity-tag">BUILT</span>CloudPulse: 100,000 of 100,000 synthetic events, none lost or double-counted</li>
       <li class="activity-item"><span class="activity-tag">BUILT</span>Flowforge: 0 lost or duplicated tasks in a 510K-task run</li>
       <li class="activity-item"><span class="activity-tag">BUILT</span>DistributedDB: 5,000+ majority-committed writes/sec, fsync on every commit</li>
       <li class="activity-item"><span class="activity-tag">GSoC</span>5-agent LangGraph pipeline shipped</li>
@@ -439,7 +440,7 @@ footer a:hover { color: var(--amber); }
       <p class="section-eyebrow reveal">// prologue</p>
       <h1 class="manifesto-statement reveal">I find the bugs <span class="highlight">nobody else</span> wants to touch.</h1>
       <div class="manifesto-divider reveal"></div>
-      <p class="manifesto-sub reveal">This is how I got here: a satellite, a notebook with 22k stars, and a race condition that only appeared when I killed a process on purpose. Eight merged PRs. A multi-agent pipeline shipped for GSoC. A workflow engine I tried to break until it stopped losing tasks. Not demos. Actual working software.</p>
+      <p class="manifesto-sub reveal">This is how I got here: a satellite, a notebook with 22k stars, and a race condition that only appeared when I killed a process on purpose. Eight merged PRs. A multi-agent pipeline shipped for GSoC. A workflow engine I tried to break until it stopped losing tasks. An AWS pipeline that counted 100,000 of 100,000 events exactly once. Not demos. Actual working software.</p>
       <p class="manifesto-sub reveal" style="transition-delay:0.05s">MS CS from UIC (4.0 GPA). F-1 OPT, available now. Based in Chicago, open to relocating. The kind of engineer who reads the diff before pushing back on the maintainer, and has the counterexample ready.</p>
     </section>
 
@@ -488,6 +489,20 @@ footer a:hover { color: var(--amber); }
         <p class="note-line">Honest footnote: all of this ran on one laptop with near-empty tasks, and Kubernetes was a local single-node cluster. It measures the engine, not the work. I would rather say so before you ask.</p>
         <div class="work-tags"><span class="tag">Java 21</span><span class="tag">Spring Boot</span><span class="tag">Kafka</span><span class="tag">PostgreSQL</span><span class="tag">Redis</span><span class="tag">Kubernetes</span></div>
         <div class="project-links"><a href="https://github.com/VishakBaddur/Flowforge" target="_blank" class="project-link">github</a></div>
+      </div>
+
+      <div class="project-entry reveal">
+        <div class="project-meta"><span class="project-title">CloudPulse</span></div>
+        <p class="project-subtitle">AWS Serverless Log Analytics Platform / Lambda, SQS, DynamoDB, CloudWatch, Terraform</p>
+        <div class="story">
+          <p>SQS delivers at least once, so a message can arrive twice, and a crashed Lambda leaves a batch half done. CloudPulse is a serverless log analytics pipeline built to give an <strong>exactly-once result</strong> on that kind of queue. Atomic conditional DynamoDB transactions make a retry harmless, partial-batch failure reporting retries only the messages that failed, and jittered exponential backoff with dead-letter routing handles poison messages.</p>
+          <p>Then I attacked it: <strong>five fault-injection scenarios</strong>, including crashes mid-batch and poison messages. Throughput scaled <strong>6.2x (66 to 414 events/s)</strong> by tuning Lambda concurrency and sharding aggregate keys to avoid write contention, with p99 latency of 156 ms at 250 events/s, measured on every one of 21K events.</p>
+          <p>It is run like a service: 8 CloudWatch custom metrics with zero added API calls, 4 alarms and a dashboard. All 15 AWS resources are in Terraform with least-privilege IAM, the same code deploys to AWS and LocalStack, and <strong>32 integration tests</strong> run in GitHub Actions on every push with no cloud credentials in CI.</p>
+        </div>
+        <div class="result-line">100,000 of 100,000 synthetic events stored, zero lost, zero double-counted. 66 to 414 events/s (6.2x). p99 156 ms at 250 events/s. 32 integration tests. 15 Terraform-managed AWS resources.</div>
+        <p class="note-line">Honest footnote: the events are synthetic and the load is a benchmark, not production traffic.</p>
+        <div class="work-tags"><span class="tag">AWS Lambda</span><span class="tag">SQS</span><span class="tag">DynamoDB</span><span class="tag">CloudWatch</span><span class="tag">Terraform</span><span class="tag">LocalStack</span><span class="tag">GitHub Actions</span></div>
+        <div class="project-links"><a href="https://github.com/VishakBaddur/CloudPulse" target="_blank" class="project-link">github</a></div>
       </div>
 
       <div class="project-entry reveal">
@@ -568,8 +583,8 @@ footer a:hover { color: var(--amber); }
         <tr><td class="skill-key">Languages</td><td class="skill-val">Java, Python, TypeScript, JavaScript, SQL, C++, C</td></tr>
         <tr><td class="skill-key">AI / ML</td><td class="skill-val">Generative AI, LangGraph, Multi-Agent Systems, RAG, pgvector, LLM APIs (Groq, Voyage AI, HuggingFace, Ollama), Scikit-learn, DistilBERT</td></tr>
         <tr><td class="skill-key">Frameworks</td><td class="skill-val">Spring Boot, FastAPI, Flask, React, Node.js</td></tr>
-        <tr><td class="skill-key">Data</td><td class="skill-val">Kafka, PostgreSQL, Redis, pgvector, ChromaDB</td></tr>
-        <tr><td class="skill-key">DevOps</td><td class="skill-val">Docker, Docker Compose, Kubernetes, AWS, GitHub Actions CI/CD, Git, Unix/Linux</td></tr>
+        <tr><td class="skill-key">Data</td><td class="skill-val">Kafka, PostgreSQL, Redis, DynamoDB, SQS, pgvector, ChromaDB</td></tr>
+        <tr><td class="skill-key">DevOps</td><td class="skill-val">Docker, Docker Compose, Kubernetes, AWS (Lambda, SQS, DynamoDB, CloudWatch), Terraform, LocalStack, GitHub Actions CI/CD, Git, Unix/Linux</td></tr>
         <tr><td class="skill-key">Systems</td><td class="skill-val">Distributed Systems, Raft Consensus, Event Sourcing, Leases and Idempotency, Async I/O, WAL, Crash Recovery</td></tr>
         <tr><td class="skill-key">AI Tools</td><td class="skill-val">Claude Code (daily, for building, debugging, and test generation)</td></tr>
       </table>
@@ -603,6 +618,8 @@ const statuses = [
   "8 PRs merged to marimo",
   "kill -9 worker: state recovered in 10-63ms",
   "510K tasks: 0 lost, 0 duplicated",
+  "cloudpulse: 100,000 of 100,000 events, exactly once",
+  "sqs delivers twice, the count stays right",
   "analyzing new architecture...",
   "redis session state: active",
   "watching NBA highlights...",
