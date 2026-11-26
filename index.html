@@ -241,7 +241,6 @@ section { margin-bottom: 6rem; }
 .manifesto-sub {
   font-size: 0.9375rem;
   color: var(--text-2);
-  max-width: 35rem;
   line-height: 1.75;
   margin-bottom: 2.5rem;
   word-break: normal;
@@ -272,7 +271,7 @@ section { margin-bottom: 6rem; }
 
 .os-cell-value { font-size: 0.8125rem; color: var(--text-2); line-height: 1.6; }
 
-.os-para { font-size: 0.875rem; color: var(--text-2); line-height: 1.8; margin-bottom: 1rem; max-width: 37.5rem; }
+.os-para { font-size: 0.875rem; color: var(--text-2); line-height: 1.8; margin-bottom: 1rem; }
 
 .work-entry { margin-bottom: 3.5rem; padding-bottom: 3.5rem; border-bottom: 1px solid var(--border); }
 .work-entry:last-child { border-bottom: none; }
@@ -302,7 +301,7 @@ section { margin-bottom: 6rem; }
 .pr-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
 .pr-title { font-family: var(--mono); font-size: 0.75rem; color: var(--text); line-height: 1.4; flex: 1; }
 .pr-badge { font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.08em; color: #28c840; border: 1px solid #1a4a22; padding: 2px 0.375rem; white-space: nowrap; flex-shrink: 0; }
-.pr-desc { font-size: 0.75rem; color: var(--text-2); line-height: 1.7; max-width: 36.25rem; margin-bottom: 0.625rem; }
+.pr-desc { font-size: 0.75rem; color: var(--text-2); line-height: 1.7; margin-bottom: 0.625rem; }
 .pr-link { font-family: var(--mono); font-size: 0.625rem; color: var(--amber); text-decoration: none; letter-spacing: 0.06em; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
 .pr-link:hover { border-color: var(--amber); }
 
@@ -372,13 +371,13 @@ footer a:hover { color: var(--amber); }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity:1; transform:none; transition:none; } }
 
 .chapter-no { font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber-dim); margin-bottom: 0.375rem; }
-.story { max-width: 40rem; }
+.story { max-width: none; }
 .story p { font-size: 0.875rem; color: var(--text-2); line-height: 1.85; margin-bottom: 1rem; }
 .story p strong { color: var(--text); font-weight: 500; }
 .story p em { color: var(--amber); font-style: normal; }
-.result-line { border-left: 2px solid var(--amber-dim); padding-left: 0.875rem; margin: 1.375rem 0; font-family: var(--mono); font-size: 0.75rem; color: var(--text); line-height: 1.75; max-width: 40rem; }
-.note-line { font-size: 0.75rem; color: var(--text-3); line-height: 1.7; max-width: 40rem; margin-bottom: 1rem; font-style: italic; }
-.interlude { font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); letter-spacing: 0.04em; margin: 0 0 3.5rem; padding-left: 0.875rem; border-left: 2px solid var(--border-bright); max-width: 40rem; line-height: 1.7; }
+.result-line { border-left: 2px solid var(--amber-dim); padding-left: 0.875rem; margin: 1.375rem 0; font-family: var(--mono); font-size: 0.75rem; color: var(--text); line-height: 1.75; }
+.note-line { font-size: 0.75rem; color: var(--text-3); line-height: 1.7; margin-bottom: 1rem; font-style: italic; }
+.interlude { font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); letter-spacing: 0.04em; margin: 0 0 3.5rem; padding-left: 0.875rem; border-left: 2px solid var(--border-bright); line-height: 1.7; }
 
 #main > section, #main > footer { max-width: 62rem; margin-left: auto; margin-right: auto; }
 @media (max-width: 768px) { html { font-size: 16px; } #main > section, #main > footer { max-width: 100%; } }
@@ -424,7 +423,7 @@ footer a:hover { color: var(--amber); }
       <li class="activity-item"><span class="activity-tag">BUILT</span>Flowforge: 0 lost or duplicated tasks in a 510K-task run</li>
       <li class="activity-item"><span class="activity-tag">BUILT</span>DistributedDB: 5,000+ majority-committed writes/sec, fsync on every commit</li>
       <li class="activity-item"><span class="activity-tag">GSoC</span>5-agent LangGraph pipeline shipped</li>
-      <li class="activity-item"><span class="activity-tag">TRAINING</span>Calisthenics: front lever progression</li>
+      <li class="activity-item"><span class="activity-tag">TRAINING</span>Calisthenics: working towards one-arm pull-up, handstand push-ups, planche</li>
     </ul>
 
     <div class="panel-stats">
@@ -568,12 +567,12 @@ footer a:hover { color: var(--amber); }
       <p class="section-eyebrow reveal">// operating_system.md</p>
       <h2 class="section-heading reveal">Off the clock.</h2>
       <div class="os-grid reveal">
-        <div class="os-cell"><div class="os-cell-label">Physical Build</div><div class="os-cell-value">Basketball, football, table tennis, badminton. Calisthenics: pull-ups, dips, working toward front lever. Sports are the first love.</div></div>
+        <div class="os-cell"><div class="os-cell-label">Physical Build</div><div class="os-cell-value">Basketball, football, table tennis, badminton. Calisthenics: pull-ups and dips, working towards the one-arm pull-up, handstand push-ups and planche. Sports are the first love.</div></div>
         <div class="os-cell"><div class="os-cell-label">Mental Model</div><div class="os-cell-value">Curious about everything. Bored by nothing. Want to travel the world, learn martial arts from the people who originated them, build something of my own one day.</div></div>
         <div class="os-cell"><div class="os-cell-label">Debugging Philosophy</div><div class="os-cell-value">In basketball you watch film before you fix your shot. In code I read the full call stack before I write a line. The root cause is always three layers deeper than the error message.</div></div>
-        <div class="os-cell"><div class="os-cell-label">Training Discipline</div><div class="os-cell-value">Calisthenics taught me that strength is built in increments, not in bursts. A front lever requires every muscle to work. A distributed system requires every node to agree. Same principle.</div></div>
+        <div class="os-cell"><div class="os-cell-label">Training Discipline</div><div class="os-cell-value">Calisthenics taught me that strength is built in increments, not in bursts. A planche requires every muscle to work. A distributed system requires every node to agree. Same principle.</div></div>
       </div>
-      <p class="os-para reveal">The consistency required to progress in calisthenics is the same consistency that got 8 PRs merged. Show up, do the work, iterate. No shortcut makes a front lever easier. No shortcut makes a 3-layer bug easier. You trace it, you fix it, you document it.</p>
+      <p class="os-para reveal">The consistency required to progress in calisthenics is the same consistency that got 8 PRs merged. Show up, do the work, iterate. No shortcut makes a planche easier. No shortcut makes a 3-layer bug easier. You trace it, you fix it, you document it.</p>
     </section>
 
     <section id="skills">
@@ -614,7 +613,7 @@ footer a:hover { color: var(--amber); }
 <script>
 const statuses = [
   "compiling latest project...",
-  "training: front lever progression",
+  "training: one-arm pull-up, handstand push-ups, planche",
   "8 PRs merged to marimo",
   "kill -9 worker: state recovered in 10-63ms",
   "510K tasks: 0 lost, 0 duplicated",
